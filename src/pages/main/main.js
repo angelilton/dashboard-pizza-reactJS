@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { Link, Route, Switch } from 'react-router-dom'
+import { Link, Route, Switch, useLocation } from 'react-router-dom'
 import {
   Drawer as MaterialDrawer,
   Typography,
@@ -39,36 +39,46 @@ const menuItems = [
   }
 ]
 
-const Main = () => (
-  <>
-    <Drawer variant="permanent">
-      <Typography variant="h4">React-zzaria</Typography>
-      <Typography>(sistema de cadastro)</Typography>
+const Main = () => {
+  const { pathname } = useLocation()
 
-      <Divider />
+  return (
+    <>
+      <Drawer variant="permanent">
+        <Typography variant="h4">React-zzaria</Typography>
+        <Typography>(sistema de cadastro)</Typography>
 
-      <List>
-        {menuItems.map((item) => (
-          <ListItem key={item.label} button component={Link} to={item.link}>
-            <ListItemText>{item.label}</ListItemText>
-          </ListItem>
-        ))}
-      </List>
-    </Drawer>
+        <Divider />
 
-    <Wrapper>
-      <Suspense fallback="Loading...">
-        <Switch>
+        <List>
           {menuItems.map((item) => (
-            <Route key={item.link} exact={item.exact} path={item.link}>
-              <item.component />
-            </Route>
+            <ListItem
+              key={item.label}
+              button
+              selected={pathname === item.link}
+              component={Link}
+              to={item.link}
+            >
+              <ListItemText>{item.label}</ListItemText>
+            </ListItem>
           ))}
-        </Switch>
-      </Suspense>
-    </Wrapper>
-  </>
-)
+        </List>
+      </Drawer>
+
+      <Wrapper>
+        <Suspense fallback="Loading...">
+          <Switch>
+            {menuItems.map((item) => (
+              <Route key={item.link} exact={item.exact} path={item.link}>
+                <item.component />
+              </Route>
+            ))}
+          </Switch>
+        </Suspense>
+      </Wrapper>
+    </>
+  )
+}
 
 const Drawer = styled(MaterialDrawer)`
   .MuiPaper-root {
