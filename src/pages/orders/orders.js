@@ -56,50 +56,64 @@ function Orders() {
         </THead>
 
         <TableBody>
-          {orders?.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell>
-                <div>
-                  <Subtitle>
-                    Horário do pedido: {getHour(order.createdAt.toDate())}
-                  </Subtitle>
-                </div>
+          {orders?.map((order) => {
+            const {
+              address,
+              number,
+              complement,
+              district,
+              code: cep,
+              city,
+              state
+            } = order.address
 
-                <div>
-                  <Subtitle>Pedido:</Subtitle>
+            return (
+              <TableRow key={order.id}>
+                <TableCell>
+                  <div>
+                    <Subtitle>
+                      Horário do pedido: {getHour(order.createdAt.toDate())}
+                    </Subtitle>
+                  </div>
 
-                  <ul>
-                    {order.pizzas.map((pizza, index) => (
-                      <li key={index}>
-                        <Typography>
-                          {` ${
-                            pizza.quantity
-                          } ${pizza.size.name.toUpperCase()}${singularOrPlural(
-                            pizza.quantity,
-                            '',
-                            'S'
-                          )} de `}
-                          {pizza.flavours.map(({ name }) => name).join(' | ')}
-                        </Typography>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  <div>
+                    <Subtitle>Pedido:</Subtitle>
 
-                <div>
-                  <Subtitle>Endereço de entrega:</Subtitle>
+                    <ul>
+                      {order.pizzas.map((pizza, index) => (
+                        <li key={index}>
+                          <Typography>
+                            {` ${
+                              pizza.quantity
+                            } ${pizza.size.name.toUpperCase()}${singularOrPlural(
+                              pizza.quantity,
+                              '',
+                              'S'
+                            )} de `}
+                            {pizza.flavours.map(({ name }) => name).join(' | ')}
+                          </Typography>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                  <Typography>
-                    Rua Tal, nº 92, ap 10
-                    <br />
-                    Bairro: São Januário - CEP: 81828-233
-                    <br />
-                    São Paulo / SP
-                  </Typography>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+                  <div>
+                    <Subtitle>Endereço de entrega:</Subtitle>
+
+                    <Typography>
+                      {` ${address},  ${number && `Nº ${number} `} `}
+                      <br />
+                      {`${complement && ` ${complement}`}`}
+                      {complement && <br />}
+                      Bairro: {`${district} - CEP: ${cep}`}
+                      <br />
+                      {`${city} / ${state}`}
+                    </Typography>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </TableContainer>
