@@ -10,8 +10,8 @@ import {
   TableRow,
   Typography
 } from '@material-ui/core'
-
 import { useOrders } from 'hooks'
+import { singularOrPlural } from 'utils'
 
 const allOrderStatus = [
   {
@@ -72,7 +72,14 @@ function Orders() {
                     {order.pizzas.map((pizza, index) => (
                       <li key={index}>
                         <Typography>
-                          1 pizza MÉDIA de Frango com Catupiry e Calabresa
+                          {` ${
+                            pizza.quantity
+                          } ${pizza.size.name.toUpperCase()}${singularOrPlural(
+                            pizza.quantity,
+                            '',
+                            'S'
+                          )} de `}
+                          {pizza.flavours.map(({ name }) => name).join(' | ')}
                         </Typography>
                       </li>
                     ))}
