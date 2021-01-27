@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import {
+  Fab,
   Paper,
   Table,
   TableBody,
@@ -10,6 +11,7 @@ import {
   TableRow,
   Typography
 } from '@material-ui/core'
+import { Check, DonutLarge, Motorcycle } from '@material-ui/icons'
 import { useOrders } from 'hooks'
 import { singularOrPlural } from 'utils'
 
@@ -21,17 +23,26 @@ function Orders() {
     return [
       {
         title: 'Pedidos pendentes',
-        type: status.pending
+        type: status.pending,
+        nextAction: status.inProgress,
+        nextButtonTitle: 'Em produção',
+        icon: DonutLarge
       },
 
       {
         title: 'Pedidos em produção',
-        type: status.inProgress
+        type: status.inProgress,
+        nextAction: status.outForDelivery,
+        nextButtonTitle: 'Saiu para entrega',
+        icon: Motorcycle
       },
 
       {
         title: 'Saiu para entrega',
-        type: status.outForDelivery
+        type: status.outForDelivery,
+        nextAction: status.delivered,
+        nextButtonTitle: 'Entregue',
+        icon: Check
       },
 
       {
@@ -59,6 +70,11 @@ function Orders() {
             <Th>
               <Typography>Informações do pedido</Typography>
             </Th>
+            {orderStatus.nextAction && (
+              <Th align="center">
+                <Typography>Mudar Status</Typography>
+              </Th>
+            )}
           </TableRow>
         </THead>
 
@@ -114,18 +130,32 @@ function Orders() {
 
                   <div>
                     <Subtitle>Endereço de entrega:</Subtitle>
-
-                    <Typography>
-                      {` ${address},  ${number && `Nº ${number} `} `}
-                      <br />
-                      {`${complement && ` ${complement}`}`}
-                      {complement && <br />}
-                      Bairro: {`${district} - CEP: ${cep}`}
-                      <br />
-                      {`${city} / ${state}`}
-                    </Typography>
+                    {cep !== '' && (
+                      <Typography>
+                        {` ${address},  ${number && `Nº ${number} `} `}
+                        <br />
+                        {`${complement && ` ${complement}`}`}
+                        {complement && <br />}
+                        Bairro: {`${district} - CEP: ${cep}`}
+                        <br />
+                        {`${city} / ${state}`}
+                      </Typography>
+                    )}
                   </div>
                 </TableCell>
+                {orderStatus.nextAction && (
+                  <TableCell align="center">
+                    <Fab
+                      color="primary"
+                      title={`Mudar status para "${orderStatus.nextButtonTitle}"`}
+                      onClick={() =>
+                        console.log('próximo status:', orderStatus.nextAction)
+                      }
+                    >
+                      <orderStatus.icon />
+                    </Fab>
+                  </TableCell>
+                )}
               </TableRow>
             )
           })}
