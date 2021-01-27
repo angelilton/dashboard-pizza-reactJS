@@ -33,15 +33,15 @@ function useOrders() {
             ...doc.data()
           })
         })
-
+        // return a new devolve object filtered by status type
         setOrders(
-          docs.reduce(
-            (acc, doc) => ({
+          docs.reduce((acc, doc) => {
+            const maisStatus = doc.status || status.pending
+            return {
               ...acc,
-              pending: acc.pending.concat(doc)
-            }),
-            initialStatus
-          )
+              [maisStatus]: acc[maisStatus].concat(doc)
+            }
+          }, initialStatus)
         )
       })
   }, [status])
