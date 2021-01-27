@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import {
   Paper,
@@ -13,28 +13,35 @@ import {
 import { useOrders } from 'hooks'
 import { singularOrPlural } from 'utils'
 
-const allOrderStatus = [
-  {
-    title: 'Pedidos pendentes'
-  },
-
-  {
-    title: 'Pedidos em produção'
-  },
-
-  {
-    title: 'Saiu para entrega'
-  },
-
-  {
-    title: 'Pedidos finalizados'
-  }
-]
-
 function Orders() {
-  const { orders } = useOrders()
+  const { orders, status } = useOrders()
   console.log('orders:', orders)
 
+  const allOrderStatus = useMemo(() => {
+    return [
+      {
+        title: 'Pedidos pendentes',
+        type: status.pending
+      },
+
+      {
+        title: 'Pedidos em produção',
+        type: status.inProgress
+      },
+
+      {
+        title: 'Saiu para entrega',
+        type: status.outForDelivery
+      },
+
+      {
+        title: 'Pedidos finalizados',
+        type: status.delivered
+      }
+    ]
+  }, [status])
+
+  //convert bd format data to hours
   const getHour = useCallback((date) => {
     const options = {
       hour: 'numeric',
@@ -56,7 +63,7 @@ function Orders() {
         </THead>
 
         <TableBody>
-          {orders?.pending.map((order) => {
+          {orders?.[orderStatus.type].map((order) => {
             const {
               address,
               number,
