@@ -63,6 +63,14 @@ function Orders() {
         </THead>
 
         <TableBody>
+          {orders?.[orderStatus.type].length === 0 && (
+            <TableRow>
+              <TableCell>
+                <Typography>Nenhum pedido com esse status.</Typography>
+              </TableCell>
+            </TableRow>
+          )}
+
           {orders?.[orderStatus.type].map((order) => {
             const {
               address,
