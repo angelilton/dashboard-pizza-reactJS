@@ -1,5 +1,14 @@
 import React from 'react'
+import FormRegisterSize from './form'
+import TablePizzasSizes from './table'
 
-export const PizzasSizes = () => {
-  return <h1>Tamanho de Pizzas</h1>
+const pizzasSizes = () => {
+  return (
+    <>
+      <FormRegisterSize />
+      <TablePizzasSizes />
+    </>
+  )
 }
+
+export default pizzasSizes
