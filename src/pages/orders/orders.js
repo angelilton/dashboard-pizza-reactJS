@@ -16,7 +16,7 @@ import { useOrders } from 'hooks'
 import { singularOrPlural } from 'utils'
 
 function Orders() {
-  const { orders, status } = useOrders()
+  const { orders, status, updateOrder } = useOrders()
   console.log('orders:', orders)
 
   const allOrderStatus = useMemo(() => {
@@ -149,7 +149,10 @@ function Orders() {
                       color="primary"
                       title={`Mudar status para "${orderStatus.nextButtonTitle}"`}
                       onClick={() =>
-                        console.log('próximo status:', orderStatus.nextAction)
+                        updateOrder({
+                          orderId: order.id,
+                          status: orderStatus.nextAction
+                        })
                       }
                     >
                       <orderStatus.icon />
