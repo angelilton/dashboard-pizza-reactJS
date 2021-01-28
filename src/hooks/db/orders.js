@@ -23,6 +23,7 @@ function useOrders() {
     }, {})
 
     db.collection('orders')
+      .orderBy('createdAt', 'asc')
       .get()
       .then((querySnapshot) => {
         const docs = []
