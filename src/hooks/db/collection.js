@@ -1,3 +1,4 @@
+import { useMounted } from 'hooks'
 import { useEffect, useState, useCallback } from 'react'
 import { useLocation } from 'react-router-dom'
 
@@ -5,6 +6,7 @@ import { db } from 'services/firebase'
 
 function useCollection(collection) {
   const [data, setData] = useState(null)
+  const mounted = useMounted()
 
   //sempre que o pathname (rota) mudar o useEffect abaixo vai re-renderizar
   //e atualizar a table de pizzaSize
@@ -19,8 +21,6 @@ function useCollection(collection) {
   )
 
   useEffect(() => {
-    let mounted = true
-
     db.collection(collection)
       .get()
       .then((querySnapshot) => {
@@ -33,15 +33,11 @@ function useCollection(collection) {
           })
         })
 
-        if (mounted) {
+        if (mounted.current) {
           setData(docs)
         }
       })
-
-    return () => {
-      mounted = false
-    }
-  }, [collection, pathname])
+  }, [collection, pathname, mounted])
 
   return { data, add }
 }
