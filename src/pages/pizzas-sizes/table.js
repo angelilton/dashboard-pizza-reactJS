@@ -19,7 +19,6 @@ const TablePizzasSizes = () => {
   const { data: pizzasSizes } = useCollection('pizzasSizes')
   const newSizePath = useRouteMatch(`${PIZZAS_SIZES}${NEW}`)
 
-  console.log(pizzasSizes)
   return (
     <TableContainer>
       <TitleContainer>
