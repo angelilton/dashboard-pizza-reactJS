@@ -16,7 +16,7 @@ import { Link, useRouteMatch } from 'react-router-dom'
 import { PIZZAS_SIZES, NEW } from 'routes'
 
 const TablePizzasSizes = () => {
-  const pizzasSizes = useCollection('pizzasSizes')
+  const { data: pizzasSizes } = useCollection('pizzasSizes')
   const newSizePath = useRouteMatch(`${PIZZAS_SIZES}${NEW}`)
 
   console.log(pizzasSizes)
