@@ -1,8 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
+import { useLocation } from 'react-router-dom'
+
 import { db } from 'services/firebase'
 
 function useCollection(collection) {
   const [data, setData] = useState(null)
+
+  //sempre que o pathname (rota) mudar o useEffect abaixo vai re-renderizar
+  //e atualizar a table de pizzaSize
+  const { pathname } = useLocation()
 
   const add = useCallback(
     (data) => {
@@ -35,7 +41,7 @@ function useCollection(collection) {
     return () => {
       mounted = false
     }
-  }, [collection])
+  }, [collection, pathname])
 
   return { data, add }
 }
