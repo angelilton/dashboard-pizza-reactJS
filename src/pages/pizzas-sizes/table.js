@@ -12,9 +12,13 @@ import { TableContainer, TableTitle, THead, Th } from 'ui'
 import { useCollection } from 'hooks'
 import { singularOrPlural } from 'utils'
 import styled from 'styled-components'
+import { Link, useRouteMatch } from 'react-router-dom'
+import { PIZZAS_SIZES, NEW } from 'routes'
 
 const TablePizzasSizes = () => {
   const pizzasSizes = useCollection('pizzasSizes')
+  const newSizePath = useRouteMatch(`${PIZZAS_SIZES}${NEW}`)
+
   console.log(pizzasSizes)
   return (
     <TableContainer>
@@ -23,7 +27,14 @@ const TablePizzasSizes = () => {
           <TableTitle>Tamanhos cadastrados</TableTitle>
         </Grid>
         <Grid item>
-          <Button variant="contained" color="primary" startIcon={<Add />}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<Add />}
+            component={Link}
+            to={`${PIZZAS_SIZES}${NEW}`}
+            disabled={!!newSizePath}
+          >
             Adicionar novo tamanho
           </Button>
         </Grid>

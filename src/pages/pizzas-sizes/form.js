@@ -2,6 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { Button, Grid, Typography } from '@material-ui/core'
 import { TextField } from 'ui'
+import { Link } from 'react-router-dom'
+import { PIZZAS_SIZES } from 'routes'
 
 const FormRegisterSize = () => {
   return (
@@ -21,7 +23,12 @@ const FormRegisterSize = () => {
 
         <Grid item container justify="flex-end" spacing={2}>
           <Grid item>
-            <Button variant="contained" color="secondary">
+            <Button
+              variant="contained"
+              color="secondary"
+              component={Link}
+              to={PIZZAS_SIZES}
+            >
               Cancelar
             </Button>
           </Grid>
