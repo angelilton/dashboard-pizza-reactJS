@@ -2,15 +2,16 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { Button, Grid, Typography } from '@material-ui/core'
 import { TextField } from 'ui'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { PIZZAS_SIZES } from 'routes'
 import { useCollection } from 'hooks'
 
 const FormRegisterSize = () => {
   const { add } = useCollection('pizzasSizes')
+  const history = useHistory()
 
   const handleSubmit = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault()
       const { name, size, slices, flavours } = e.target.elements
 
@@ -21,9 +22,10 @@ const FormRegisterSize = () => {
         flavours: Number(flavours.value)
       }
 
-      add(data)
+      await add(data)
+      history.push(PIZZAS_SIZES)
     },
-    [add]
+    [add, history]
   )
 
   return (
