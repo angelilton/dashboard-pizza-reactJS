@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useMounted } from 'hooks'
 import { db } from 'services/firebase'
 
 function useOrders() {
   const [orders, setOrders] = useState(null)
+  const mounted = useMounted()
 
   const status = useMemo(
     () => ({
@@ -34,6 +36,12 @@ function useOrders() {
             ...doc.data()
           })
         })
+
+        // check if the component is mounted
+        if (!mounted.current) {
+          return
+        }
+
         // return a new devolve object filtered by status type
         setOrders(
           docs.reduce((acc, doc) => {
@@ -45,7 +53,7 @@ function useOrders() {
           }, initialStatus)
         )
       })
-  }, [status])
+  }, [status, mounted])
 
   const updateOrder = useCallback(
     async ({ orderId, status }) => {
