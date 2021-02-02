@@ -5,3 +5,4 @@ export const PIZZAS_FLAVOURS = '/flavours'
 
 // actions
 export const NEW = '/novo'
+export const EDIT = (id = ':id') => `/${id}/editar`

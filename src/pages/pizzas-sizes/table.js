@@ -13,7 +13,7 @@ import { useCollection } from 'hooks'
 import { singularOrPlural } from 'utils'
 import styled from 'styled-components'
 import { Link, useRouteMatch } from 'react-router-dom'
-import { PIZZAS_SIZES, NEW } from 'routes'
+import { PIZZAS_SIZES, NEW, EDIT } from 'routes'
 
 const TablePizzasSizes = () => {
   const { data: pizzasSizes, remove } = useCollection('pizzasSizes')
@@ -62,7 +62,13 @@ const TablePizzasSizes = () => {
               </TableCell>
 
               <TableCell align="right">
-                <BtnAction startIcon={<Edit />}>Editar</BtnAction>
+                <BtnAction
+                  startIcon={<Edit />}
+                  component={Link}
+                  to={`${PIZZAS_SIZES}${EDIT(pizza.id)}`}
+                >
+                  Editar
+                </BtnAction>
                 <BtnAction
                   color="secondary"
                   startIcon={<Delete />}
