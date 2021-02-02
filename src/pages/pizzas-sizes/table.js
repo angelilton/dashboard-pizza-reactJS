@@ -16,7 +16,7 @@ import { Link, useRouteMatch } from 'react-router-dom'
 import { PIZZAS_SIZES, NEW } from 'routes'
 
 const TablePizzasSizes = () => {
-  const { data: pizzasSizes } = useCollection('pizzasSizes')
+  const { data: pizzasSizes, remove } = useCollection('pizzasSizes')
   const newSizePath = useRouteMatch(`${PIZZAS_SIZES}${NEW}`)
 
   return (
@@ -63,7 +63,11 @@ const TablePizzasSizes = () => {
 
               <TableCell align="right">
                 <BtnAction startIcon={<Edit />}>Editar</BtnAction>
-                <BtnAction color="secondary" startIcon={<Delete />}>
+                <BtnAction
+                  color="secondary"
+                  startIcon={<Delete />}
+                  onClick={() => remove(pizza.id)}
+                >
                   Remover
                 </BtnAction>
               </TableCell>

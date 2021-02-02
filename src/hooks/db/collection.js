@@ -12,15 +12,7 @@ function useCollection(collection) {
   //e atualizar a table de pizzaSize
   const { pathname } = useLocation()
 
-  const add = useCallback(
-    (data) => {
-      console.log('add-size:', data)
-      return db.collection(collection).add(data)
-    },
-    [collection]
-  )
-
-  useEffect(() => {
+  const fetchCollectionData = useCallback(() => {
     db.collection(collection)
       .get()
       .then((querySnapshot) => {
@@ -37,9 +29,29 @@ function useCollection(collection) {
           setData(docs)
         }
       })
-  }, [collection, pathname, mounted])
+  }, [collection, mounted])
 
-  return { data, add }
+  const add = useCallback(
+    (data) => {
+      console.log('add-size:', data)
+      return db.collection(collection).add(data)
+    },
+    [collection]
+  )
+
+  const remove = useCallback(
+    async (id) => {
+      await db.collection(collection).doc(id).delete()
+      fetchCollectionData()
+    },
+    [collection, fetchCollectionData]
+  )
+
+  useEffect(() => {
+    fetchCollectionData()
+  }, [fetchCollectionData, pathname])
+
+  return { data, add, remove }
 }
 
 export default useCollection
