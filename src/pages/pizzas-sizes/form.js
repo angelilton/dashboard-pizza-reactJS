@@ -1,14 +1,55 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState, useEffect, useReducer } from 'react'
 import styled from 'styled-components'
 import { Button, Grid, Typography } from '@material-ui/core'
 import { TextField } from 'ui'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useHistory, useParams } from 'react-router-dom'
 import { PIZZAS_SIZES } from 'routes'
 import { useCollection } from 'hooks'
 
+const initialState = {
+  name: '',
+  size: '',
+  slices: '',
+  flavours: ''
+}
+
+// ---- reducer ----
+function reducer(state, action) {
+  if (action.type === 'EDIT') {
+    return action.payload
+  }
+  return state
+}
+
+// ---- hook to handle pizza data ----
+function usePizzaSize(id) {
+  const { data, add } = useCollection('pizzasSizes')
+  const [pizza, setPizza] = useState(initialState)
+
+  useEffect(() => {
+    setPizza(data?.find((p) => p.id === id) || initialState)
+  }, [data, id])
+
+  return { pizza, add }
+}
+
+// ---- Form ----
 const FormRegisterSize = () => {
-  const { add } = useCollection('pizzasSizes')
   const history = useHistory()
+  const { id } = useParams()
+  const { pizza, add } = usePizzaSize(id)
+
+  const [pizzaEdit, dispatch] = useReducer(reducer, initialState)
+  console.log('item to edit:', pizzaEdit)
+
+  useEffect(() => {
+    dispatch({
+      type: 'EDIT',
+      payload: pizza
+    })
+  }, [pizza])
+
+  const handleChange = useCallback((e) => {}, [])
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -35,13 +76,33 @@ const FormRegisterSize = () => {
       </Grid>
 
       <Form onSubmit={handleSubmit}>
-        <TextField name="name" label="Nome para esse tamanho. Ex: Pequena" />
+        <TextField
+          name="name"
+          label="Nome para esse tamanho. Ex: Pequena"
+          value={pizzaEdit.name}
+          onChange={handleChange}
+        />
 
-        <TextField name="size" label="Diâmetro da pizza em cm" />
+        <TextField
+          name="size"
+          label="Diâmetro da pizza em cm"
+          value={pizzaEdit.size}
+          onChange={handleChange}
+        />
 
-        <TextField name="slices" label="Quantidade de fatias" />
+        <TextField
+          name="slices"
+          label="Quantidade de fatias"
+          value={pizzaEdit.slices}
+          onChange={handleChange}
+        />
 
-        <TextField name="flavours" label="Quantidade de sabores" />
+        <TextField
+          name="flavours"
+          label="Quantidade de sabores"
+          value={pizzaEdit.flavours}
+          onChange={handleChange}
+        />
 
         <Grid item container justify="flex-end" spacing={2}>
           <Grid item>
