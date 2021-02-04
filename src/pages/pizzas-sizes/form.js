@@ -1,4 +1,10 @@
-import React, { useCallback, useState, useEffect, useReducer } from 'react'
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useReducer,
+  useRef
+} from 'react'
 import styled from 'styled-components'
 import { Button, Grid, Typography } from '@material-ui/core'
 import { TextField } from 'ui'
@@ -18,29 +24,43 @@ function reducer(state, action) {
   if (action.type === 'EDIT') {
     return action.payload
   }
+
+  if (action.type === 'UPDATE_FIELD') {
+    return {
+      ...state,
+      ...action.payload
+    }
+  }
+
   return state
 }
 
 // ---- hook to handle pizza data ----
 function usePizzaSize(id) {
-  const { data, add } = useCollection('pizzasSizes')
+  const { data, add, edit } = useCollection('pizzasSizes')
   const [pizza, setPizza] = useState(initialState)
 
   useEffect(() => {
     setPizza(data?.find((p) => p.id === id) || initialState)
   }, [data, id])
 
-  return { pizza, add }
+  return { pizza, add, edit }
 }
 
 // ---- Form ----
 const FormRegisterSize = () => {
   const history = useHistory()
   const { id } = useParams()
-  const { pizza, add } = usePizzaSize(id)
+  const nameField = useRef()
+
+  const { pizza, add, edit } = usePizzaSize(id)
 
   const [pizzaEdit, dispatch] = useReducer(reducer, initialState)
   console.log('item to edit:', pizzaEdit)
+
+  useEffect(() => {
+    nameField.current.focus()
+  }, [id])
 
   useEffect(() => {
     dispatch({
@@ -49,24 +69,38 @@ const FormRegisterSize = () => {
     })
   }, [pizza])
 
-  const handleChange = useCallback((e) => {}, [])
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target
+    dispatch({
+      type: 'UPDATE_FIELD',
+      payload: {
+        [name]: value
+      }
+    })
+  }, [])
 
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault()
-      const { name, size, slices, flavours } = e.target.elements
+      const { id, name, size, slices, flavours } = pizzaEdit
 
       const data = {
-        name: name.value,
-        size: Number(size.value),
-        slices: Number(slices.value),
-        flavours: Number(flavours.value)
+        name,
+        size: Number(size),
+        slices: Number(slices),
+        flavours: Number(flavours)
       }
 
-      await add(data)
+      if (id) {
+        await edit(id, data)
+      } else {
+        await add(data)
+      }
+
+      //update table with pizzas data
       history.push(PIZZAS_SIZES)
     },
-    [add, history]
+    [add, edit, history, pizzaEdit]
   )
 
   return (
@@ -79,6 +113,7 @@ const FormRegisterSize = () => {
         <TextField
           name="name"
           label="Nome para esse tamanho. Ex: Pequena"
+          inputRef={nameField}
           value={pizzaEdit.name}
           onChange={handleChange}
         />
