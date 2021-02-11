@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useMemo,
   useState,
   useEffect,
   useReducer,
@@ -58,6 +59,14 @@ const FormRegisterSize = () => {
   const [pizzaEdit, dispatch] = useReducer(reducer, initialState)
   console.log('item to edit:', pizzaEdit)
 
+  const texts = useMemo(
+    () => ({
+      title: id ? 'Editar tamanho' : 'Cadastrar novo tamanho',
+      button: id ? 'salvar' : 'Cadastrar'
+    }),
+    [id]
+  )
+
   useEffect(() => {
     nameField.current.focus()
   }, [id])
@@ -106,7 +115,7 @@ const FormRegisterSize = () => {
   return (
     <Container>
       <Grid item xs={12}>
-        <Typography variant="h4">Cadastrar novo tamanho</Typography>
+        <Typography variant="h4">{texts.title}</Typography>
       </Grid>
 
       <Form onSubmit={handleSubmit}>
@@ -153,7 +162,7 @@ const FormRegisterSize = () => {
 
           <Grid item>
             <Button variant="contained" color="primary" type="submit">
-              Cadastrar
+              {texts.button}
             </Button>
           </Grid>
         </Grid>
