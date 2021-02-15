@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react'
+import React, { Suspense, useCallback } from 'react'
 import { Link, Route, Switch, useLocation } from 'react-router-dom'
 import {
   Drawer as MaterialDrawer,
@@ -9,38 +9,23 @@ import {
   ListItemText
 } from '@material-ui/core'
 import styled from 'styled-components'
-
+import menuItems from './content'
+import { useScrollToTop } from 'hooks'
 import * as routes from 'routes'
 
-// importes das paginas com lazy load > isso vai carregar apenas quando chamado
-const Orders = lazy(() => import('pages/orders'))
-const PizzasSizes = lazy(() => import('pages/pizzas-sizes'))
-const PizzasFlavours = lazy(() => import('pages/pizzas-flavours'))
-
-// items para o menu com rotas to e component
-const menuItems = [
-  {
-    label: 'Pedidos',
-    link: routes.HOME,
-    component: Orders,
-    exact: true
-  },
-
-  {
-    label: 'Tamanhos de pizzas',
-    link: routes.PIZZAS_SIZES,
-    component: PizzasSizes
-  },
-
-  {
-    label: 'Sabores de pizzas',
-    link: routes.PIZZAS_FLAVOURS,
-    component: PizzasFlavours
-  }
-]
-
 const Main = () => {
+  useScrollToTop()
   const { pathname } = useLocation()
+
+  const getSelectedMenuItem = useCallback(
+    (item) => {
+      return (
+        pathname === item.link ||
+        (pathname.includes(item.link) && item.link !== routes.HOME)
+      )
+    },
+    [pathname]
+  )
 
   return (
     <>
@@ -55,7 +40,7 @@ const Main = () => {
             <ListItem
               key={item.label}
               button
-              selected={pathname === item.link}
+              selected={getSelectedMenuItem(item)}
               component={Link}
               to={item.link}
             >
