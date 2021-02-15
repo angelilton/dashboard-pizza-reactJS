@@ -20,7 +20,6 @@ function App() {
   useEffect(() => {
     //busca os dados do usuário no firebase
     firebase.auth().onAuthStateChanged((user) => {
-      console.log('usuário:', user)
       setUserInfo({
         isUserLoggedIn: !!user,
         user

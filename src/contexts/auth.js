@@ -1,6 +1,6 @@
-import React, { useState, createContext, useCallback } from 'react'
+import React, { useState, createContext, useCallback, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import firebase from 'services/firebase'
+import firebase, { db } from 'services/firebase'
 
 export const AuthContext = createContext()
 
@@ -9,8 +9,29 @@ const initialState = {
   user: null
 }
 
-function Auth({ children }) {
+function AuthProvider({ children }) {
   const [userInfo, setUserInfo] = useState(initialState)
+
+  useEffect(() => {
+    console.log('user date:', userInfo.user)
+    const uid = userInfo.user?.uid || 'EMPTY'
+    db.collection('users')
+      .doc(uid)
+      .get()
+      .then((doc) => {
+        console.log('existe?', doc.exists, uid)
+        if (doc.exists || uid === 'EMPTY') {
+          console.log('ja existe ou e EMPTY: ', doc, uid)
+          return
+        }
+
+        db.collection('users').doc(uid).set({
+          email: userInfo.user.email,
+          name: userInfo.user.displayName,
+          role: 'user'
+        })
+      })
+  }, [userInfo])
 
   const login = useCallback(() => {
     const provider = new firebase.auth.GithubAuthProvider()
@@ -40,8 +61,9 @@ function Auth({ children }) {
     </AuthContext.Provider>
   )
 }
-Auth.propTypes = {
+
+AuthProvider.propTypes = {
   children: PropTypes.node.isRequired
 }
 
-export default Auth
+export default AuthProvider
