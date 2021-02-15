@@ -8,10 +8,16 @@ import {
   TableRow
 } from '@material-ui/core'
 import { Add, Delete, Edit } from '@material-ui/icons'
-import { TableContainer, TableTitle, THead, Th } from 'ui'
+import {
+  TableContainer,
+  TableTitle,
+  THead,
+  Th,
+  TableTitleContainer,
+  TableButton
+} from 'ui'
 import { useCollection } from 'hooks'
 import { singularOrPlural } from 'utils'
-import styled from 'styled-components'
 import { Link, useRouteMatch } from 'react-router-dom'
 import { PIZZAS_SIZES, NEW, EDIT } from 'routes'
 
@@ -21,7 +27,7 @@ const TablePizzasSizes = () => {
 
   return (
     <TableContainer>
-      <TitleContainer>
+      <TableTitleContainer>
         <Grid item>
           <TableTitle>Tamanhos cadastrados</TableTitle>
         </Grid>
@@ -37,7 +43,7 @@ const TablePizzasSizes = () => {
             Adicionar novo tamanho
           </Button>
         </Grid>
-      </TitleContainer>
+      </TableTitleContainer>
 
       <Table>
         <THead>
@@ -62,20 +68,20 @@ const TablePizzasSizes = () => {
               </TableCell>
 
               <TableCell align="right">
-                <BtnAction
+                <TableButton
                   startIcon={<Edit />}
                   component={Link}
                   to={`${PIZZAS_SIZES}${EDIT(pizza.id)}`}
                 >
                   Editar
-                </BtnAction>
-                <BtnAction
+                </TableButton>
+                <TableButton
                   color="secondary"
                   startIcon={<Delete />}
                   onClick={() => remove(pizza.id)}
                 >
                   Remover
-                </BtnAction>
+                </TableButton>
               </TableCell>
             </TableRow>
           ))}
@@ -84,23 +90,5 @@ const TablePizzasSizes = () => {
     </TableContainer>
   )
 }
-
-const TitleContainer = styled(Grid).attrs({
-  container: true,
-  justify: 'space-between',
-  alignItems: 'center'
-})`
-  padding: ${({ theme }) => theme.spacing(3)}px;
-
-  ${TableTitle} {
-    padding: 0;
-  }
-`
-
-const BtnAction = styled(Button).attrs({
-  variant: 'outlined'
-})`
-  margin-left: ${({ theme }) => theme.spacing(2)}px;
-`
 
 export default TablePizzasSizes
