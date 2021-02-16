@@ -29,6 +29,8 @@ const TablePizzaFlavours = () => {
   const { data: pizzasFlavours, remove } = useCollection('pizzasFlavours')
 
   console.log('flavours:', pizzasFlavours)
+  const { data: pizzasSizes } = useCollection('pizzasSizes')
+  console.log('Sizes:', pizzasSizes)
 
   return (
     <TableContainer>
@@ -71,9 +73,15 @@ const TablePizzaFlavours = () => {
 
               <TableCell>
                 <List>
-                  <ListItem name={'Média'} value={30} />
-                  <ListItem name={'pequena'} value={20} />
-                  <ListItem name={'Broto'} value={10} />
+                  {Object.entries(pizza.value).map(([valueKey, value]) => {
+                    const sizeName = pizzasSizes?.find(
+                      (size) => size.id === valueKey
+                    )?.name
+
+                    return (
+                      <ListItem key={valueKey} name={sizeName} value={value} />
+                    )
+                  })}
                 </List>
               </TableCell>
 
