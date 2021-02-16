@@ -33,7 +33,6 @@ function useCollection(collection) {
 
   const add = useCallback(
     (data) => {
-      console.log('add-size:', data)
       return db.collection(collection).add(data)
     },
     [collection]
@@ -41,7 +40,6 @@ function useCollection(collection) {
 
   const edit = useCallback(
     (id, data) => {
-      console.log('edit:', id, data)
       return db.collection(collection).doc(id).set(data)
     },
     [collection]

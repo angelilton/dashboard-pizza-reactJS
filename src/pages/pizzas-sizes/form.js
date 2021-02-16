@@ -56,7 +56,6 @@ const FormRegisterSize = () => {
   const { pizza, add, edit } = usePizzaSize(id)
 
   const [pizzaEdit, dispatch] = useReducer(reducer, initialState)
-  console.log('item to edit:', pizzaEdit)
 
   const texts = useMemo(
     () => ({

@@ -13,15 +13,12 @@ function AuthProvider({ children }) {
   const [userInfo, setUserInfo] = useState(initialState)
 
   useEffect(() => {
-    console.log('user date:', userInfo.user)
     const uid = userInfo.user?.uid || 'EMPTY'
     db.collection('users')
       .doc(uid)
       .get()
       .then((doc) => {
-        console.log('existe?', doc.exists, uid)
         if (doc.exists || uid === 'EMPTY') {
-          console.log('ja existe ou e EMPTY: ', doc, uid)
           return
         }
 
