@@ -12,14 +12,32 @@ import { Form, FormContainer, TextField } from 'ui'
 import { PIZZAS_FLAVOURS } from 'routes'
 import { useCollection } from 'hooks'
 
+const initialState = {
+  image: '',
+  name: '',
+  value: {}
+}
+
+// ---- hook to handle pizza data ----
+function usePizzaFlavours(id) {
+  const [pizza, setPizza] = useState(initialState)
+  const { data, add, edit } = useCollection('pizzasFlavours')
+
+  useEffect(() => {
+    setPizza(data?.find((pizza) => pizza.id === id) || initialState)
+  }, [data, id])
+
+  return { pizza, add, edit }
+}
+
 // ---- Form ----
 const FormRegisterFlavour = () => {
   const { id } = useParams()
   const imageField = useRef()
   const history = useHistory()
   const { data: pizzasSizes } = useCollection('pizzasSizes')
-  const { add } = useCollection('pizzasFlavours')
-  console.log('Sizes:', pizzasSizes)
+  const { pizza, add } = usePizzaFlavours(id)
+  console.log('pizzas:', pizza)
 
   const texts = useMemo(
     () => ({
@@ -32,6 +50,8 @@ const FormRegisterFlavour = () => {
   useEffect(() => {
     imageField.current.focus()
   }, [id])
+
+  const handleChange = useCallback(async (params) => {}, [])
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -63,9 +83,17 @@ const FormRegisterFlavour = () => {
           label="Link para imagem desse sabor"
           name="image"
           inputRef={imageField}
+          value={pizza.image}
+          onChange={handleChange}
         />
 
-        <TextField label="Nome do sabor" name="name" />
+        <TextField
+          label="Nome do sabor"
+          name="name"
+          value={pizza.name}
+          onChange={handleChange}
+        />
+
         <Grid item xs={12}>
           <InputLabel>Valores (em R$) para cada tamanho:</InputLabel>
         </Grid>
