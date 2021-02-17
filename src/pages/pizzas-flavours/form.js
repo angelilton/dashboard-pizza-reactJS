@@ -16,8 +16,9 @@ import { useCollection } from 'hooks'
 const FormRegisterFlavour = () => {
   const { id } = useParams()
   const imageField = useRef()
-
+  const history = useHistory()
   const { data: pizzasSizes } = useCollection('pizzasSizes')
+  const { add } = useCollection('pizzasFlavours')
   console.log('Sizes:', pizzasSizes)
 
   const texts = useMemo(
@@ -32,30 +33,52 @@ const FormRegisterFlavour = () => {
     imageField.current.focus()
   }, [id])
 
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault()
+      const fields = e.target.elements
+
+      const normalizedData = {
+        name: fields.name.value,
+        image: fields.image.value,
+        value: pizzasSizes.reduce((acc, item) => {
+          acc[item.id] = +fields[`size-${item.id}`].value
+          return acc
+        }, {})
+      }
+
+      await add(normalizedData)
+      history.push(PIZZAS_FLAVOURS)
+    },
+    [pizzasSizes, add, history]
+  )
+
   return (
     <FormContainer>
       <Grid item xs={12}>
         <Typography variant="h4">{texts.title}</Typography>
       </Grid>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <TextField
           label="Link para imagem desse sabor"
           name="image"
           inputRef={imageField}
         />
+
         <TextField label="Nome do sabor" name="name" />
         <Grid item xs={12}>
           <InputLabel>Valores (em R$) para cada tamanho:</InputLabel>
         </Grid>
-        // add sizes fields
+
         {pizzasSizes?.map((size) => (
           <TextField
             key={size.id}
             label={size.name}
             name={`size-${size.id}`}
-            xs={2}
+            xs={3}
           />
         ))}
+
         <Grid item container justify="flex-end" spacing={2}>
           <Grid item>
             <Button variant="contained" component={Link} to={PIZZAS_FLAVOURS}>
