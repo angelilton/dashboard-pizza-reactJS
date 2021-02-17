@@ -10,10 +10,15 @@ import { Link, useHistory, useParams } from 'react-router-dom'
 import { Button, Grid, InputLabel, Typography } from '@material-ui/core'
 import { Form, FormContainer, TextField } from 'ui'
 import { PIZZAS_FLAVOURS } from 'routes'
+import { useCollection } from 'hooks'
 
+// ---- Form ----
 const FormRegisterFlavour = () => {
   const { id } = useParams()
   const imageField = useRef()
+
+  const { data: pizzasSizes } = useCollection('pizzasSizes')
+  console.log('Sizes:', pizzasSizes)
 
   const texts = useMemo(
     () => ({
@@ -42,13 +47,15 @@ const FormRegisterFlavour = () => {
         <Grid item xs={12}>
           <InputLabel>Valores (em R$) para cada tamanho:</InputLabel>
         </Grid>
-
-        <TextField label="Pequena" name="size-0" xs={4} />
-
-        <TextField label="Média" name="size-1" xs={4} />
-
-        <TextField label="Grande" name="size-2" xs={4} />
-
+        // add sizes fields
+        {pizzasSizes?.map((size) => (
+          <TextField
+            key={size.id}
+            label={size.name}
+            name={`size-${size.id}`}
+            xs={2}
+          />
+        ))}
         <Grid item container justify="flex-end" spacing={2}>
           <Grid item>
             <Button variant="contained" component={Link} to={PIZZAS_FLAVOURS}>
