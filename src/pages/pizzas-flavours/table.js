@@ -28,9 +28,7 @@ const TablePizzaFlavours = () => {
   const newFlavourPath = useRouteMatch(`${PIZZAS_FLAVOURS}${NEW}`)
   const { data: pizzasFlavours, remove } = useCollection('pizzasFlavours')
 
-  console.log('flavours:', pizzasFlavours)
   const { data: pizzasSizes } = useCollection('pizzasSizes')
-  console.log('Sizes:', pizzasSizes)
 
   return (
     <TableContainer>
