@@ -30,14 +30,33 @@ function usePizzaFlavours(id) {
   return { pizza, add, edit }
 }
 
+// ---- reducer ----
+function reducer(state, action) {
+  if (action.type === 'EDIT') {
+    return action.payload
+  }
+
+  if (action.type === 'UPDATE_FIELD') {
+    return {
+      ...state,
+      ...action.payload
+    }
+  }
+
+  return state
+}
+
 // ---- Form ----
 const FormRegisterFlavour = () => {
   const { id } = useParams()
   const imageField = useRef()
   const history = useHistory()
   const { data: pizzasSizes } = useCollection('pizzasSizes')
-  const { pizza, add } = usePizzaFlavours(id)
-  console.log('pizzas:', pizza)
+  const { pizza, add, edit } = usePizzaFlavours(id)
+
+  const [pizzaEditable, dispatch] = useReducer(reducer, initialState)
+
+  console.log('pizzaEditable:', pizzaEditable)
 
   const texts = useMemo(
     () => ({
@@ -51,7 +70,22 @@ const FormRegisterFlavour = () => {
     imageField.current.focus()
   }, [id])
 
-  const handleChange = useCallback(async (params) => {}, [])
+  useEffect(() => {
+    dispatch({
+      type: 'EDIT',
+      payload: pizza
+    })
+  }, [pizza])
+
+  const handleChange = useCallback(async (e) => {
+    const { name: field, value } = e.target
+    dispatch({
+      type: 'UPDATE_FIELD',
+      payload: {
+        [field]: value
+      }
+    })
+  }, [])
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -83,14 +117,14 @@ const FormRegisterFlavour = () => {
           label="Link para imagem desse sabor"
           name="image"
           inputRef={imageField}
-          value={pizza.image}
+          value={pizzaEditable.image}
           onChange={handleChange}
         />
 
         <TextField
           label="Nome do sabor"
           name="name"
-          value={pizza.name}
+          value={pizzaEditable.name}
           onChange={handleChange}
         />
 
