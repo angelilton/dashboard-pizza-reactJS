@@ -43,6 +43,16 @@ function reducer(state, action) {
     }
   }
 
+  if (action.type === 'UPDATE_SIZE') {
+    return {
+      ...state,
+      value: {
+        ...state.value,
+        ...action.payload
+      }
+    }
+  }
+
   return state
 }
 
@@ -56,7 +66,7 @@ const FormRegisterFlavour = () => {
 
   const [pizzaEditable, dispatch] = useReducer(reducer, initialState)
 
-  console.log('pizzaEditable:', pizzaEditable)
+  // console.log('pizzaEditable:', pizzaEditable)
 
   const texts = useMemo(
     () => ({
@@ -79,10 +89,15 @@ const FormRegisterFlavour = () => {
 
   const handleChange = useCallback(async (e) => {
     const { name: field, value } = e.target
+    const action = field.includes('size-') ? 'UPDATE_SIZE' : 'UPDATE_FIELD'
+    const fieldName = field.includes('size-')
+      ? field.replace('size-', '')
+      : field
+
     dispatch({
-      type: 'UPDATE_FIELD',
+      type: action,
       payload: {
-        [field]: value
+        [fieldName]: value
       }
     })
   }, [])
@@ -90,21 +105,23 @@ const FormRegisterFlavour = () => {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault()
-      const fields = e.target.elements
+      const { id, ...data } = pizzaEditable
 
       const normalizedData = {
-        name: fields.name.value,
-        image: fields.image.value,
-        value: pizzasSizes.reduce((acc, item) => {
-          acc[item.id] = +fields[`size-${item.id}`].value
+        ...data,
+        value: Object.entries(data.value).reduce((acc, [sizeId, value]) => {
+          acc[sizeId] = +value
           return acc
         }, {})
       }
 
-      await add(normalizedData)
+      console.log('normalize:', normalizedData)
+      if (id) await edit(id, normalizedData)
+      else await add(normalizedData)
+
       history.push(PIZZAS_FLAVOURS)
     },
-    [pizzasSizes, add, history]
+    [add, edit, history, pizzaEditable]
   )
 
   return (
@@ -137,6 +154,8 @@ const FormRegisterFlavour = () => {
             key={size.id}
             label={size.name}
             name={`size-${size.id}`}
+            value={pizzaEditable.value[size.id] || ''}
+            onChange={handleChange}
             xs={3}
           />
         ))}
